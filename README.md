@@ -1,1 +1,1 @@
-# dictionary-learning-for-MIL
+# frozen-DL-for-MIL
