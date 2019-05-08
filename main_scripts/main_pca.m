@@ -1,0 +1,10 @@
+addpath('tools');
+addpath('scripts');
+addpath('classDefs');
+demean_and_normalize_script;
+udl_pca_script;
+insert(py.sys.path,int32(0),'');
+cd('tools');
+py.importlib.import_module('python_save_tool');
+cd('..');
+pca_projection_script;

@@ -1,11 +1,14 @@
-load('param_file.mat', ...
+clear;
+load('r-eStatesAndPaths/absolute_paths.mat');
+load([experimentPath,'param_file.mat'], ...
     'number_of_generating_dictionaries', ...
     'number_of_negative_dictionary_atoms', ...
     'K', ...
     'dimension', ...
     'number_of_classes');
-load('structure_file.mat');    
-
+load([experimentPath,'structure_file.mat']);    
+nodePath = [experimentPath,'dictionary/'];
+mkdir(nodePath);
 
 for ii = 1:number_of_generating_dictionaries
     
@@ -29,6 +32,8 @@ parents = [build_relative_node('generating_dictionary_identifier',dict_id), ...
     build_relative_node('K',K)];
 nodeName = 'dictionary';
 instantiationField = instanceNameFun.ms.(nodeName)(dict_id);
-experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents));
+instantiationPath = [nodePath,instantiationField];
+experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents,instantiationField));
+save(instantiationPath,'generating_dictionary');
 end
-save('structure_file.mat','experimentLayout','-append');
+save([experimentPath,'structure_file.mat'],'experimentLayout','-append');

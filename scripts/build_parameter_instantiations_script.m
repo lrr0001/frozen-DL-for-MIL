@@ -1,4 +1,5 @@
-load('structure.mat');
+load('r-eStatesAndPaths/absolute_paths.mat');
+load([experimentPath,'structure_file.mat']);
 
 nodeName = 'number_of_classes';
 parents = [];
@@ -33,15 +34,15 @@ experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(pare
 nodeName = 'number_of_bags';
 
 parents = relativeNode('dataset_type','train');
-instantiationField = instanceNameFun.ms.(nodeName)(number_of_bags_train,'train');
+instantiationField = instanceNameFun.ms.(nodeName)(number_of_bags.train,'train');
 experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents));
 
 parents = relativeNode('dataset_type','val');
-instantiationField = instanceNameFun.ms.(nodeName)(number_of_bags_val,'val');
+instantiationField = instanceNameFun.ms.(nodeName)(number_of_bags.val,'val');
 experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents));
 
 parents = relativeNode('dataset_type','test');
-instantiationField = instanceNameFun.ms.(nodeName)(number_of_bags_test,'test');
+instantiationField = instanceNameFun.ms.(nodeName)(number_of_bags.test,'test');
 experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents));
 
 nodeName = 'imbalance_ratio';
@@ -100,21 +101,29 @@ nodeName = 'dictionary_learning_method';
 parents = [];
 instantiationField = 'unsupervised_KSVD';
 experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents));
-instantiationField = 'frozen_KSVD';
+instantiationField = 'supervised_frozen_KSVD';
 experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents));
 instantiationField = 'PCA';
 experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents));
+
+
+
+nodeName = 'coefficient_learning_method';
+parents = [];
+instantiationField = 'OMP';
+experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents));
+instnatiationField = 'projection';
+experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents));
+
 
 nodeName = 'learned_coef_sparsity_level';
 parents = [];
 instantiationField = instanceNameFun.ms.(nodeName)(lc_sparsity_level);
 experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents));
 
-nodeName = 'PCA_r';
+nodeName = 'max_PCA_r';
 parents = [];
-nodeAbrev = 'r';
-instanceNameFun.ms.(nodeName) = @(r) sprintf('%s%d',nodeAbrev,r);
-instantiationField = instanceNameFun.ms.(nodeName)(pca_r);
+instantiationField = instanceNameFun.ms.(nodeName)(max_pca_r);
 experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents));
 
 nodeName = 'PCA_normalize';
@@ -161,4 +170,11 @@ for cc = 1:number_of_classes
     experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents));
 end
 
-save('structure.mat','experimentLayout','-append');
+nodeName = 'cost_exp';
+parents = [];
+for cost_exp = list_of_cost_exp
+    instantiationField = instanceNameFun.ms.(nodeName)(cost_exp);
+    experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents));
+end
+
+save([experimentPath,'structure_file.mat'],'experimentLayout','-append');

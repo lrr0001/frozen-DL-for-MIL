@@ -1,3 +1,4 @@
+#!/bin/bash
 read REPLICABLEEXPERIMENTDIRECTORY < "r-eStatesAndPaths/REPLICABLE-EXPERIMENT.txt"
 source "${REPLICABLEEXPERIMENTDIRECTORY}/REPLICABLEEXPERIMENTFUNCTIONS.sh"
 setup_replicable_experiment $(basename -- "$0")

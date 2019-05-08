@@ -1,3 +1,4 @@
+#!/bin/bash
 read REPLICABLEEXPERIMENTDIRECTORY < "r-eStatesAndPaths/REPLICABLE-EXPERIMENT.txt"
 source "${REPLICABLEEXPERIMENTDIRECTORY}/REPLICABLEEXPERIMENTFUNCTIONS.sh"
 replicable_experiment_cleanup $(basename -- "$0")

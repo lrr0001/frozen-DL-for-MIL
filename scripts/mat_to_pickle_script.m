@@ -1,4 +1,4 @@
-function kk = sdl_frzn_ksvd_script(usePACE)
+function kk = mat_to_pickle_script(usePACE)
 % Check if prepping PACE or computing on current machine.
 if nargin < 1
     usePACE = false;
@@ -10,32 +10,43 @@ end
 
 % dependencies will capture all that is necessary to prep for PACE
 if usePACE
-    dependencies = sdl_frzn_ksvd_struct;
+    dependencies = mat_to_pickle_struct;
     kk = 0;
 end
 load('r-eStatesAndPaths/absolute_paths.mat');
 % load all relevant parameters from param_file.mat'
-load([experimentPath,'param_file.mat'], ...
-    'SDL_negative_dictsize', ...
-    'SDL_total_dictsize', ...
-    'SDL_negative_sparsity_level', ...
-    'SDL_positive_sparsity_level', ...
-    'SDL_negative_iternum', ...
-    'SDL_positive_iternum', ...
-    'number_of_classes', ...
-    'lc_sparsity_level');
+load([experimentPath,'param_file.mat']);
 
 load([experimentPath,'structure_file.mat']);
 
-% Loop through all data identifiers.
-for data_id_inst_cell = fields(experimentLayout.n.('data_identifier'))'
-data_id_inst_str = data_id_inst_cell{1};
+% Loop through learned coefficients
+for learned_coef_id_inst_cell = fields(experimentLayout.n.('learned_coefficients_identifier'))'
+learned_coef_id_inst_str = learned_coef_id_inst_cell{1};
+learned_coef_id = get_id_from_inst_field(learned_coef_id_inst_str);
+
+% Find data identifier corresponding to current learned coef ID.
+for lci_parent = experimentLayout.n.('learned_coefficients_identifier').(learned_coef_id_inst_str).parents
+    if ~isstreq(lci_parent.node,'data_identifier')
+        continue;
+    end
+    data_id_inst_str = lci_parent.instance;
+    break;
+end
 data_id = get_id_from_inst_field(data_id_inst_str);
-% relative path works in PACE and on computer
-dataPath = ['data/',instanceNameFun.ms.('data')(data_id,'train'),'.mat'];
-if ~usePACE
-    load([experimentPath,dataPath],'x');
-    x_train = x;
+
+% Determine whether DLM is supervised
+for lci_parent = experimentLayout.n.('learned_coefficients_identifier').(learned_coef_id_inst_str).parents
+    if ~isstreq(lci_parent.node,'learned_dictionary_identifier')
+        continue;
+    end
+    ldi_inst_str = lci_parent.instance;
+    break;
+end
+for ldi_parent = experimentLayout.n.('learned_dictionary_identifier').(ldi_inst_str).parents
+    if ~isstreq(ldi_parent.node,'dictionary_learning_method')
+        continue;
+    end
+    supervised = dlm_issupervised(ldi_parent.instance);
 end
 
 % Find the bag-labels identifier corresponding to the current
@@ -59,8 +70,25 @@ for inst_labels_parent = experimentLayout.n.(instance_labels_relative.node).(ins
         continue;
     end
     bag_labels_id_inst_str = inst_labels_parent.instance;
-    bag_labels_id = get_id_from_inst_field(bag_labels_id_inst_str);
     break;
+end
+bag_labels_id = get_id_from_inst_field(bag_labels_id_inst_str);
+
+for learned_coef_relativeNode = experimentLayout.n.('learned_coefficients_identifier').(learned_coef_id_inst_str).children
+if ~isstreq(learned_coef_relativeNode.node,'learned_coef')
+    continue;
+end
+
+
+
+
+
+
+% relative path works in PACE and on computer
+dataPath = ['data/',instanceNameFun.ms.('data')(data_id,'train'),'.mat'];
+if ~usePACE
+    load([experimentPath,dataPath],'x');
+    x_train = x;
 end
 %relative path
 bagLabelsPath = ['bag_labels/',instanceNameFun.ms.('bag_labels')(bag_labels_id,'train')];
@@ -69,27 +97,6 @@ if ~usePACE
     bag_labels_train = bag_labels;
 end
 
-% assign a learned-dictionary identifier.
-learned_dictionary_id = dec2hex(randi(2^28) - 1);
-nodeName = 'learned_dictionary_identifier';
-parents = [relativeNode('dictionary_learning_method','supervised_frozen_KSVD'), ...
-    build_relative_node('data_identifier',data_id), ...
-    build_relative_node('bag_labels_identifier',bag_labels_id)];
-instantiationField = instanceNameFun.ms.(nodeName)(learned_dictionary_id);
-experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents));
-
-% List all dependencies except class.
-coreParents = [relativeNode('dictionary_learning_method','supervised_frozen_KSVD'), ...
-    build_relative_node('learned_dictionary_identifier',learned_dictionary_id), ...
-    build_relative_node('SDL_negative_dictionary_size',SDL_negative_dictsize), ...
-    build_relative_node('SDL_total_dictionary_size',SDL_total_dictsize), ...
-    build_relative_node('SDL_negative_sparsity_level',SDL_negative_sparsity_level), ...
-    build_relative_node('SDL_positive_sparsity_level',SDL_positive_sparsity_level), ...
-    build_relative_node('SDL_negative_number_of_iterations',SDL_negative_iternum), ...
-    build_relative_node('SDL_positive_number_of_iterations',SDL_positive_iternum), ...
-    build_relative_node('data',data_id,'train'), ...
-    build_relative_node('bag_labels',bag_labels_id,'train'), ...
-    build_relative_node('number_of_classes',number_of_classes)];
 
 
 frzn_ksvd_param.negative_dictsize = SDL_negative_dictsize;
@@ -111,7 +118,8 @@ for cc = 1:number_of_classes
         kk = kk + 1;
         dependencies(kk) = sdl_frzn_ksvd_struct(dataPath,bagLabelsPath,frzn_ksvd_param,class,learnedDictionaryPath);
     else
-        learned_dictionary = MIL_supervised_ksvd(x_train,bag_labels_train(cc,:),frzn_ksvd_param);
+%    learned_dictionary = MIL_supervised_ksvd(x_train,bag_labels_train(cc,:),frzn_ksvd_param);
+        learned_dictionary = 1;
         gmat = learned_dictionary'*learned_dictionary;
     end
 
@@ -120,9 +128,12 @@ for cc = 1:number_of_classes
     end
 end
 end
+end
+end
 if usePACE
     save([experimentPathPACE,'dependencies/sdl_fzn_dependencies.mat'],'dependencies');
 %    generate_sdl_frzn_PBS(experimentPath,kk)
+end
 end
 save([experimentPath,'structure_file.mat'],'experimentLayout','-append');
 end

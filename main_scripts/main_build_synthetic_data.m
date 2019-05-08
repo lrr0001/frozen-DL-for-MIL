@@ -1,0 +1,15 @@
+clear;
+addpath('scripts');
+addpath('tools');
+addpath('classDefs');
+build_experiment_path;
+addAbsolutePaths;
+build_PACE_staging_folder;
+prelist_nodes;
+parameter_script;
+build_parameter_instantiations_script;
+generate_dictionaries_script;
+generate_bag_labels_script;
+generate_instance_labels_script;
+generate_coefficients_script;
+generate_data_script;
