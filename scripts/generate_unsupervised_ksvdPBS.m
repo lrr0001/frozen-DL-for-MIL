@@ -1,13 +1,16 @@
-function generate_unsupervised_ksvdPBS(noj)
+function udl_ii = generate_unsupervised_ksvdPBS(noj)
 if nargin < 1
     noj = 1;
 end
 load('r-eStatesAndPaths/absolute_paths.mat');
 [jj_list,kk_list] = max_job_split(noj);
-for ii = 1:numel(jj_list);
+for ii = 1:numel(jj_list)
     jj = jj_list(ii);
     kk = kk_list(ii);
-    fid = fopen(sprintf([experimentPathPACE,'unsupervised_ksvdPBS%d'],ii),'w');
+    myPBSstr = sprintf([experimentPathPACE,'unsupervised_ksvdPBS%d'],ii);
+    mkdir([myPBSstr,'Out/']);
+    system([sprintf('seq %d 1 %d | sort - > "',jj,kk),myPBSstr,'Out/.filelist"']);
+    fid = fopen(myPBSstr,'w');
     fprintf(fid,sprintf('#PBS -N unsupervisedKSVDScript%d\n',ii));
     fprintf(fid,'#PBS -l nodes=1:ppn=1\n');
     fprintf(fid,'#PBS -l walltime=2:20:00\n');
@@ -23,10 +26,11 @@ for ii = 1:numel(jj_list);
     fprintf(fid,'MATLABCODE="${MATLABCODE}addpath(''functions_PACE'');"\n');
     fprintf(fid,'MATLABCODE="${MATLABCODE}addpath(''tools'');"\n');
     fprintf(fid,'MATLABCODE="${MATLABCODE}addpath(''classDefs'');"\n');
-    fprintf(fid,'MATLABCODE="${MATLABCODE}dependency=get_udl_ksvd_dependencies(${PBS_ARRAYID});"\n');
+    fprintf(fid,'MATLABCODE="${MATLABCODE}dependency=get_udl_ksvd_dependencies(${MOAB_JOBARRAYINDEX});"\n');
     fprintf(fid,'MATLABCODE="${MATLABCODE}udl_ksvd_PACE(dependency);"\n');
     fprintf(fid,'MATLABCODE="${MATLABCODE}exit;"\n');
     fprintf(fid,'matlab -nodesktop -nosplash -r "${MATLABCODE}"\n');
+    fprintf(fid,['> ',sprintf('"unsupervised_ksvdPBS%d',ii),'Out/${MOAB_JOBARRAYINDEX}"\n']);
     fclose(fid);
 end
 udl_ii = ii;

@@ -1,28 +1,17 @@
-function misvm_ii = generate_mi_svmPBS(noj)
-
-
-if nargin < 1
-    noj = 1;
-end
-load('r-eStatesAndPaths/absolute_paths.mat');
-[jj_list,kk_list] = max_job_split(noj);
-for ii = 1:numel(jj_list)
-    jj = jj_list(ii);
-    kk = kk_list(ii);
-    myPBSstr = sprintf([experimentPathPACE,'misvmPBS%d'],ii);
-    mkdir([myPBSstr,'Out/']);
-    system([sprintf('seq %d 1 %d | sort -  > "',jj,kk),myPBSstr,'Out/.filelist"']);
-    fid = fopen(myPBSstr,'w');
+function regenerate_mi_svmPBS(ii,taskstr)
+load('absolutePaths/absolute_paths.mat');
+    myPBSstr = sprintf([experimentPath,'misvmPBS%d'],ii);
+    fid = fopen([myPBSstr,'_retry'],'w');
     fprintf(fid,sprintf('#PBS -N misvmScript%d\n',ii));
     fprintf(fid,'#PBS -l nodes=1:ppn=1\n');
-    fprintf(fid,'#PBS -l walltime=12:00:00\n');
+    fprintf(fid,'#PBS -l walltime=1:12:00:00\n');
     fprintf(fid,'#PBS -l pmem=2gb\n');
-    fprintf(fid,'#PBS -q iw-shared-6\n');
+    fprintf(fid,'#PBS -q eceforce-6\n');
     fprintf(fid,'#PBS -j oe\n');
     fprintf(fid,sprintf('#PBS -o misvm%d.out\n',ii));
-    fprintf(fid,'#PBS -t %d-%d\n\n',jj,kk);
+    fprintf(fid,'#PBS -t %s\n\n',taskstr);
 
-    fprintf(fid,'cd ~/scratch/experiment_%s_PACE\n',experiment_hash);
+    fprintf(fid,'cd %s\n',experimentPath);
     fprintf(fid,'module load anaconda3/latest\n');
     fprintf(fid,'source activate environment1\n');
 
@@ -38,6 +27,4 @@ for ii = 1:numel(jj_list)
     fprintf(fid,['> "',sprintf('misvmPBS%d',ii),'Out/${MOAB_JOBARRAYINDEX}"\n']);
     fclose(fid);
 end
-misvm_ii = ii;
-save([experimentPath,'number_of_PBS_scripts.mat'],'misvm_ii','-append');
-end
+

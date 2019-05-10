@@ -2,9 +2,11 @@ addpath('classDefs');
 addpath('scripts');
 addpath('tools');
 numberOfSubtasks = udl_ksvd_script(true);
-generate_unsupervised_ksvdPBS(numberOfSubtasks);
+udl_ii = generate_unsupervised_ksvdPBS(numberOfSubtasks);
+%generate_unsupervised_ksvd_retrialPBS(udl_ii);
 numberOfSubtasks = sdl_frzn_ksvd_script(true);
-generate_supervised_frozen_ksvdPBS(numberOfSubtasks);
+sdl_ii = generate_supervised_frozen_ksvdPBS(numberOfSubtasks);
+%generate_supervised_frozen_ksvd_retrialPBS(sdl_ii);
 numberOfSubtasks = sparse_coding_script(true);
-generate_sparse_codingPBS(numberOfSubtasks);
-
+sc_ii = generate_sparse_codingPBS(numberOfSubtasks);
+%generate_sparse_coding_retrialPBS(sc_ii);

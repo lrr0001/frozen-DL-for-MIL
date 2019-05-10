@@ -1,13 +1,16 @@
-function generate_sparse_codingPBS(noj)
+function sc_ii = generate_sparse_codingPBS(noj)
 if nargin < 1
     noj = 1;
 end
 load('r-eStatesAndPaths/absolute_paths.mat');
 [jj_list,kk_list] = max_job_split(noj);
-for ii = 1:numel(jj_list);
+for ii = 1:numel(jj_list)
     jj = jj_list(ii);
     kk = kk_list(ii);
-    fid = fopen(sprintf([experimentPathPACE,'sparse_codingPBS%d'],ii),'w');
+    myPBSstr = sprintf([experimentPathPACE,'sparse_codingPBS%d'],ii);
+    mkdir([myPBSstr,'Out/']);
+    system([sprintf('seq %d 1 %d | sort - > "',jj,kk),myPBSstr,'Out/.filelist"']);
+    fid = fopen(myPBSstr,'w');
     fprintf(fid,sprintf('#PBS -N sparseCodingScript%d\n',ii));
     fprintf(fid,'#PBS -l nodes=1:ppn=1\n');
     fprintf(fid,'#PBS -l walltime=2:00:00\n');
@@ -29,10 +32,11 @@ for ii = 1:numel(jj_list);
     fprintf(fid,'MATLABCODE="${MATLABCODE}insert(py.sys.path,int32(0),'''');"\n');
     fprintf(fid,'MATLABCODE="${MATLABCODE}py.importlib.import_module(''python_save_tool'');"\n');
     fprintf(fid,'MATLABCODE="${MATLABCODE}cd(''..'');"\n');
-    fprintf(fid,'MATLABCODE="${MATLABCODE}dependency=get_sparse_coding_dependencies(${PBS_ARRAYID});"\n');
+    fprintf(fid,'MATLABCODE="${MATLABCODE}dependency=get_sparse_coding_dependencies(${MOAB_JOBARRAYINDEX});"\n');
     fprintf(fid,'MATLABCODE="${MATLABCODE}sparse_coding_PACE(dependency);"\n');
     fprintf(fid,'MATLABCODE="${MATLABCODE}exit;"\n');
     fprintf(fid,'matlab -nodesktop -nosplash -r "${MATLABCODE}"\n');
+    fprintf(fid,['> "',sprintf('sparse_codingPBS%d',ii),'Out/${MOAB_JOBARRAYINDEX}"\n']);
     fclose(fid);
 end
 sc_ii = ii;
