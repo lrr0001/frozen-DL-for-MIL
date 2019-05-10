@@ -32,11 +32,11 @@ for ii = 1:numel(jj_list)
     fprintf(fid,'MATLABCODE="${MATLABCODE}insert(py.sys.path,int32(0),'''');"\n');
     fprintf(fid,'MATLABCODE="${MATLABCODE}py.importlib.import_module(''python_save_tool'');"\n');
     fprintf(fid,'MATLABCODE="${MATLABCODE}cd(''..'');"\n');
-    fprintf(fid,'MATLABCODE="${MATLABCODE}dependency=get_sparse_coding_dependencies(${MOAB_JOBARRAYINDEX});"\n');
+    fprintf(fid,'MATLABCODE="${MATLABCODE}dependency=get_sparse_coding_dependencies(${PBS_ARRAYID});"\n');
     fprintf(fid,'MATLABCODE="${MATLABCODE}sparse_coding_PACE(dependency);"\n');
     fprintf(fid,'MATLABCODE="${MATLABCODE}exit;"\n');
     fprintf(fid,'matlab -nodesktop -nosplash -r "${MATLABCODE}"\n');
-    fprintf(fid,['> "',sprintf('sparse_codingPBS%d',ii),'Out/${MOAB_JOBARRAYINDEX}"\n']);
+    fprintf(fid,['> "',sprintf('sparse_codingPBS%d',ii),'Out/${PBS_ARRAYID}"\n']);
     fclose(fid);
 end
 sc_ii = ii;

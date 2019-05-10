@@ -26,11 +26,11 @@ for ii = 1:numel(jj_list)
     fprintf(fid,'MATLABCODE="${MATLABCODE}addpath(''functions_PACE'');"\n');
     fprintf(fid,'MATLABCODE="${MATLABCODE}addpath(''tools'');"\n');
     fprintf(fid,'MATLABCODE="${MATLABCODE}addpath(''classDefs'');"\n');
-    fprintf(fid,'MATLABCODE="${MATLABCODE}dependency=get_udl_ksvd_dependencies(${MOAB_JOBARRAYINDEX});"\n');
+    fprintf(fid,'MATLABCODE="${MATLABCODE}dependency=get_udl_ksvd_dependencies(${PBS_ARRAYID});"\n');
     fprintf(fid,'MATLABCODE="${MATLABCODE}udl_ksvd_PACE(dependency);"\n');
     fprintf(fid,'MATLABCODE="${MATLABCODE}exit;"\n');
     fprintf(fid,'matlab -nodesktop -nosplash -r "${MATLABCODE}"\n');
-    fprintf(fid,['> ',sprintf('"unsupervised_ksvdPBS%d',ii),'Out/${MOAB_JOBARRAYINDEX}"\n']);
+    fprintf(fid,['> ',sprintf('"unsupervised_ksvdPBS%d',ii),'Out/${PBS_ARRAYID}"\n']);
     fclose(fid);
 end
 udl_ii = ii;
