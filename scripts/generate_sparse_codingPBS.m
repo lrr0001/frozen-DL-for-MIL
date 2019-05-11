@@ -1,24 +1,20 @@
-function sc_ii = generate_sparse_codingPBS(noj)
+function generate_sparse_codingPBS(noj)
 if nargin < 1
     noj = 1;
 end
 load('r-eStatesAndPaths/absolute_paths.mat');
-[jj_list,kk_list] = max_job_split(noj);
-for ii = 1:numel(jj_list)
-    jj = jj_list(ii);
-    kk = kk_list(ii);
-    myPBSstr = sprintf([experimentPathPACE,'sparse_codingPBS%d'],ii);
+
+    myPBSstr = [experimentPathPACE,'sparse_codingPBS'];
     mkdir([myPBSstr,'Out/']);
-    system([sprintf('seq %d 1 %d | sort - > "',jj,kk),myPBSstr,'Out/.filelist"']);
+    system([sprintf('seq 1 1 %d | sort - > "',noj),myPBSstr,'Out/.filelist"']);
     fid = fopen(myPBSstr,'w');
-    fprintf(fid,sprintf('#PBS -N sparseCodingScript%d\n',ii));
+    fprintf(fid,'#PBS -N sparseCodingScript\n');
     fprintf(fid,'#PBS -l nodes=1:ppn=1\n');
     fprintf(fid,'#PBS -l walltime=2:00:00\n');
     fprintf(fid,'#PBS -l pmem=2gb\n');
     fprintf(fid,'#PBS -q iw-shared-6\n');
     fprintf(fid,'#PBS -j oe\n');
-    fprintf(fid,sprintf('#PBS -o sparseCoding%d.out\n',ii));
-    fprintf(fid,'#PBS -t %d-%d\n\n',jj,kk);
+    fprintf(fid,'#PBS -o sparseCoding.out\n');
 
     fprintf(fid,'cd ~/scratch/experiment_%s_PACE\n',experiment_hash);
     fprintf(fid,'module load matlab/r2017a\n');
@@ -32,13 +28,15 @@ for ii = 1:numel(jj_list)
     fprintf(fid,'MATLABCODE="${MATLABCODE}insert(py.sys.path,int32(0),'''');"\n');
     fprintf(fid,'MATLABCODE="${MATLABCODE}py.importlib.import_module(''python_save_tool'');"\n');
     fprintf(fid,'MATLABCODE="${MATLABCODE}cd(''..'');"\n');
-    fprintf(fid,'MATLABCODE="${MATLABCODE}dependency=get_sparse_coding_dependencies(${PBS_ARRAYID});"\n');
+    fprintf(fid,'MATLABCODE="${MATLABCODE}dependency=get_sparse_coding_dependencies(${USER_JOBARRAYINDEX});"\n');
     fprintf(fid,'MATLABCODE="${MATLABCODE}sparse_coding_PACE(dependency);"\n');
     fprintf(fid,'MATLABCODE="${MATLABCODE}exit;"\n');
     fprintf(fid,'matlab -nodesktop -nosplash -r "${MATLABCODE}"\n');
-    fprintf(fid,['> "',sprintf('sparse_codingPBS%d',ii),'Out/${PBS_ARRAYID}"\n']);
+    fprintf(fid,['> "sparse_codingPBSOut/${USER_JOBARRAYINDEX}"\n']);
     fclose(fid);
-end
-sc_ii = ii;
-save([experimentPath,'number_of_PBS_scripts.mat'],'sc_ii','-append');
+fid2 = fopen([experimentPathPACE,'sparseCodingShellScript'],'w');
+fprintf(fid2,sprintf('for INDEX in $(seq 1 1 %d); do\n',noj));
+fprintf(fid2,'msub -v USER_JOBARRAYINDEX=${INDEX} sparse_codingPBS\n');
+fprintf(fid2,'done\n');
+fclose(fid2);
 end

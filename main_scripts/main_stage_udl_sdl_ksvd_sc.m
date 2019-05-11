@@ -8,5 +8,5 @@ numberOfSubtasks = sdl_frzn_ksvd_script(true);
 sdl_ii = generate_supervised_frozen_ksvdPBS(numberOfSubtasks);
 %generate_supervised_frozen_ksvd_retrialPBS(sdl_ii);
 numberOfSubtasks = sparse_coding_script(true);
-sc_ii = generate_sparse_codingPBS(numberOfSubtasks);
+generate_sparse_codingPBS(numberOfSubtasks);
 %generate_sparse_coding_retrialPBS(sc_ii);
