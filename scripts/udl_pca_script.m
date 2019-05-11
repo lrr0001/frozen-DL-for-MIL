@@ -7,7 +7,7 @@ load([experimentPath,'structure_file.mat']);
 nodePath = [experimentPath,'learned_dictionary/'];
 
 % Loop through data-mean identifiers and load means.
-for data_mean_id_inst_cell = fields(experimentLayout.n.('data_mean_identifier'))
+for data_mean_id_inst_cell = fields(experimentLayout.n.('data_mean_identifier'))'
 data_mean_id_inst_str = data_mean_id_inst_cell{1};
 data_mean_id = get_id_from_inst_field(data_mean_id_inst_str);
 load([experimentPath,'data_mean_and_normalization_factor/',instanceNameFun.ms.('data_mean_and_normalization_factor')(data_mean_id)],'row_normalization_factor','data_mean');
