@@ -84,7 +84,7 @@ instanceNameFun.ms.(nodeName) = @(ipg) sprintf('%s%d',nodeAbrev,ipg);
 
 nodeName = 'witness_rate';
 nodeAbrev = 'wr';
-instanceNameFun.ms.(nodeName) = @(wr) [sprintf('%s',nodeAbrev),sprintf('_%d',wr*100)];
+instanceNameFun.ms.(nodeName) = @(wr) [sprintf('%s',nodeAbrev),sprintf('_%d',uint8(wr*100))];
 
 nodeName = 'instance_labels';
 nodeAbrev = 'il';
