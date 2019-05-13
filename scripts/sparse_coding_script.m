@@ -62,6 +62,8 @@ end
 data_id_inst_str = parent.instance;
 data_id = get_id_from_inst_field(data_id_inst_str);
 
+% Add loop through list of lc sparsity levels
+
 % *** ADD LEARNED COEFFICIENT IDENTIFIER TO GRAPH ***
 learned_coef_id = dec2hex(randi(2^28) - 1);
 nodeName = 'learned_coefficients_identifier';
