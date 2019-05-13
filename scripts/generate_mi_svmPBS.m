@@ -9,6 +9,8 @@ fprintf(fid,'#PBS -l nodes=1:ppn=1\n');
 fprintf(fid,'#PBS -l walltime=12:00:00\n');
 fprintf(fid,'#PBS -l pmem=2gb\n');
 fprintf(fid,'#PBS -q iw-shared-6\n');
+fprintf(fid,'#PBS -j oe\n');
+fprintf(fid,'#PBS -o misvmPBS.out\n');
 fprintf(fid,'cd ~/scratch/experiment_%s_PACE\n',experiment_hash);
 fprintf(fid,'module load anaconda3/latest\n');
 fprintf(fid,'source activate environment1\n');

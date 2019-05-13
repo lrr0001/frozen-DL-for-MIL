@@ -177,6 +177,10 @@ nodeName = 'max_PCA_r';
 nodeAbrev = 'max_r';
 instanceNameFun.ms.(nodeName) = @(r) sprintf('%s%d',nodeAbrev,r);
 
+nodeName = 'pca_r';
+nodeAbrev = 'pca_r';
+instanceNameFun.ms.(nodeName) = @(r) sprintf('%s%d',nodeAbrev,r);
+
 vars = who;
 load('r-eStatesAndPaths/absolute_paths.mat');
 save([experimentPath,'structure_file.mat'],vars{:});

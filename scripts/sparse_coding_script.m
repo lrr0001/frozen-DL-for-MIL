@@ -54,6 +54,23 @@ else
     continue;
 end
 
+% *** IDENTIFY THE DATA IDENTIFIER CORRESPONDING TO LEARNED DICTIONARY ***
+for parent = experimentLayout.n.('learned_dictionary_identifier').(learned_dict_id_inst_str).parents
+if ~isstreq(parent.node,'data_identifier')
+    continue;
+end
+data_id_inst_str = parent.instance;
+data_id = get_id_from_inst_field(data_id_inst_str);
+
+% *** ADD LEARNED COEFFICIENT IDENTIFIER TO GRAPH ***
+learned_coef_id = dec2hex(randi(2^28) - 1);
+nodeName = 'learned_coefficients_identifier';
+parents = [relativeNode('coefficient_learning_method','OMP'), ...
+    build_relative_node('learned_dictionary_identifier',learned_dictionary_id), ...
+    build_relative_node('data_identifier',data_id)];
+instantiationField = instanceNameFun.ms.(nodeName)(learned_coef_id);
+experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents));
+
 % Either looping through classes (if supervised) or selecting the one
 % learned dictionary (unsupervised)
 for child = experimentLayout.n.('learned_dictionary_identifier').(learned_dict_id_inst_str).children
@@ -80,24 +97,6 @@ else
     end
     learnedDictionaryPath = [child.node,'/',child.instance];
 end
-
-
-% *** IDENTIFY THE DATA IDENTIFIER CORRESPONDING TO LEARNED DICTIONARY ***
-for parent = experimentLayout.n.('learned_dictionary_identifier').(learned_dict_id_inst_str).parents
-if ~isstreq(parent.node,'data_identifier')
-    continue;
-end
-data_id_inst_str = parent.instance;
-data_id = get_id_from_inst_field(data_id_inst_str);
-
-% *** ADD LEARNED COEFFICIENT IDENTIFIER TO GRAPH ***
-learned_coef_id = dec2hex(randi(2^28) - 1);
-nodeName = 'learned_coefficients_identifier';
-parents = [relativeNode('coefficient_learning_method','OMP'), ...
-    build_relative_node('learned_dictionary_identifier',learned_dictionary_id), ...
-    build_relative_node('data_identifier',data_id)];
-instantiationField = instanceNameFun.ms.(nodeName)(learned_coef_id);
-experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents));
 
 
 % *** FOR EACH DATA INSTANTIATION CORRESPONDING TO DATA IDENTIFIER ***

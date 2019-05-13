@@ -1,6 +1,6 @@
 clear;
 % this script defines all my MATLAB parameters
-number_of_generating_dictionaries = 10;
+number_of_generating_dictionaries = 2;
 list_of_witness_rates = 0.15:0.05:0.2;
 list_of_imbalance_ratios = 0.2;
 number_of_bag_label_sets = 1;
@@ -11,9 +11,9 @@ number_of_coef_sets = 1;
 list_of_dl_sparsity_levels = 4;
 list_of_cl_sparsity_levels = 4;
 %list_of_cost_exp = 10:2:12;
-list_of_cost_exp = 4;
+list_of_cost_exp = 10:2:12;
 %list_of_pca_r = 6:3:12;
-list_of_pca_r = 6;
+list_of_pca_r = 6:3:9;
 max_pca_r = max(list_of_pca_r);
 
 number_of_classes = 4;

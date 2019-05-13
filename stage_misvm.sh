@@ -3,7 +3,7 @@ read REPLICABLEEXPERIMENTDIRECTORY < "r-eStatesAndPaths/REPLICABLE-EXPERIMENT.tx
 source "${REPLICABLEEXPERIMENTDIRECTORY}/REPLICABLEEXPERIMENTFUNCTIONS.sh"
 setup_replicable_experiment_script $(basename -- "$0")
 
-if /usr/local/MATLAB/R2017a/bin/matlab -nodesktop -nosplash -r "addpath('main_scripts');rng('shuffle');insert(py.sys.path,int32(0),'');dbstop if error;cd('tools');py.importlib.import_module('python_save_tool');cd('..');main_stage_misvm;exit;"
+if /usr/local/MATLAB/R2017a/bin/matlab -nodesktop -nosplash -r "addpath('main_scripts');rng('shuffle');insert(py.sys.path,int32(0),'');dbstop if warning;cd('tools');py.importlib.import_module('python_save_tool');cd('..');main_stage_misvm;exit;"
 then
     :
 else

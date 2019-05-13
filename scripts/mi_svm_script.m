@@ -14,7 +14,7 @@ prestr = ['/nv/hp20/lrichert3/scratch/',sprintf('experiment_%s_PACE/',experiment
 ext = '.pickle'; % don't change this. Must match other functions.  Better programmer would have put it in structure_file.
 dataTypes = {'train','val','test'};
 
-% Loop through learned coefficients
+% Loop through learned learned-coefficient identifiers
 for learned_coef_id_inst_cell = fields(experimentLayout.n.('learned_coefficients_identifier'))'
 learned_coef_id_inst_str = learned_coef_id_inst_cell{1};
 learned_coef_id = get_id_from_inst_field(learned_coef_id_inst_str);
@@ -74,28 +74,13 @@ for inst_labels_parent = experimentLayout.n.(instance_labels_relative.node).(ins
 end
 bag_labels_id = get_id_from_inst_field(bag_labels_id_inst_str);
 
-for learned_coef_relativeNode = experimentLayout.n.('learned_coefficients_identifier').(learned_coef_id_inst_str).children
-if ~isstreq(learned_coef_relativeNode.node,'learned_coef')
-    continue;
-end
-
-if supervised
-    for class_relativeNode = experimentLayout.n.('learned_coef').(learned_coef_relativeNode.instance).parents
-        if ~isstreq(class_relativeNode.node,'class')
-            continue;
-        end
-        class_list = get_class_from_inst_field(class_relativeNode.instance);
-        break;
-    end
-else
-    class_list = 1:number_of_classes;
-end
-
+% save relative paths to bag labels
 bag_labels_train_str = ['bag_labels/',instanceNameFun.ms.('bag_labels')(bag_labels_id,'train'),ext];
 bag_labels_val_str = ['bag_labels/',instanceNameFun.ms.('bag_labels')(bag_labels_id,'val'),ext];
 bag_labels_test_str = ['bag_labels/',instanceNameFun.ms.('bag_labels')(bag_labels_id,'test'),ext];
 bl_strs = {bag_labels_train_str,bag_labels_val_str,bag_labels_test_str};
 
+% add estimated-bag-labels identifier to structure graph
 estimated_bag_labels_id = dec2hex(randi(2^28) - 1);
 nodeName = 'estimated_bag_labels_identifier';
 parents = [build_relative_node('bag_labels_identifier',bag_labels_id), ...
@@ -104,11 +89,36 @@ instantiationField = instanceNameFun.ms.(nodeName)(estimated_bag_labels_id);
 experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents));
 
 
+% build class list for current learned-cofficient set
+%{
+if supervised
+    class_list = [];
+    for learned_coef_relativeNode = experimentLayout.n.('learned_coefficients_identifier').(learned_coef_id_inst_str).children
+        if ~isstreq(learned_coef_relativeNode.node,'learned_coef')
+            continue;
+        end
+        for class_relativeNode = experimentLayout.n.('learned_coef').(learned_coef_relativeNode.instance).parents
+            if ~isstreq(class_relativeNode.node,'class')
+                continue;
+            end
+            class_list = [class_list,get_class_from_inst_field(class_relativeNode.instance)];
+            break;
+        end
+    end
+else
+    class_list = 1:number_of_classes;
+end
+%}
+class_list = 1:number_of_classes;
+
+% build pca_r list for current learned-coefficient set
 if pca
-    curr_pca_r_list = pca_r_list;
+    curr_pca_r_list = list_of_pca_r;
 else
     curr_pca_r_list = 1;
 end
+
+% build dependency sets for classification
 for cc = class_list
     if supervised
         learned_coef_train_str = ['learned_coef/',instanceNameFun.ms.('learned_coef')(learned_coef_id,cc,'train'),ext];
@@ -166,7 +176,6 @@ for cc = class_list
         end
 
     end
-end
 end
 end
 

@@ -112,7 +112,7 @@ nodeName = 'coefficient_learning_method';
 parents = [];
 instantiationField = 'OMP';
 experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents));
-instnatiationField = 'projection';
+instantiationField = 'projection';
 experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents));
 
 
@@ -174,6 +174,13 @@ nodeName = 'cost_exp';
 parents = [];
 for cost_exp = list_of_cost_exp
     instantiationField = instanceNameFun.ms.(nodeName)(cost_exp);
+    experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents));
+end
+
+nodeName = 'pca_r';
+parents = [];
+for pca_r = list_of_pca_r
+    instantiationField = instanceNameFun.ms.(nodeName)(pca_r);
     experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents));
 end
 

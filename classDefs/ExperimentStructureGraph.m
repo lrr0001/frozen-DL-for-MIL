@@ -12,11 +12,12 @@ classdef ExperimentStructureGraph < handle
                 if isfield(obj.n.(nodeField),instantiationField)
                     parentsInGraph = obj.n.(nodeField).(instantiationField).parents;
                     proposedParents = instantiation.parents;
+                    warning('Node being added is already included.');
                     for proposedParent = proposedParents
                         found = false;
                         for graphParent = parentsInGraph
                             if all(size(proposedParent.node) == size(graphParent.node)) && all(size(proposedParent.instance) == size(graphParent.instance))
-                                if all(proposedParent.node == graphParent.node) && all(proposedParent.instance == graphParent.instance)
+                                if numel(proposedParent.node) == numel(graphParent.node) && all(proposedParent.node == graphParent.node) && numel(proposedParent.instance) == numel(graphParent.instance) && all(proposedParent.instance == graphParent.instance)
                                     found = true;
                                     break;
                                 end
@@ -28,7 +29,7 @@ classdef ExperimentStructureGraph < handle
                     end
                     for graphParent = parentsInGraph
                         for proposedParent = proposedParents
-                            if all(proposedParent.node == graphParent.node) && all(proposedParent.instance == graphParent.instance)
+                            if numel(proposedParent.node) == numel(graphParent.node) && all(proposedParent.node == graphParent.node) && numel(proposedParent.instance) == numel(graphParent.instance) && all(proposedParent.instance == graphParent.instance)
                                 found = true;
                                 break;
                             end

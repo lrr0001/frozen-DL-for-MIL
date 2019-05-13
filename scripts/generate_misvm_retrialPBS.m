@@ -16,12 +16,12 @@ load('r-eStatesAndPaths/absolute_paths.mat');
     fprintf(fid,'TEMPVAR=$(ls | diff - .filelist | grep ">")\n');
     fprintf(fid,'cd ..\n');
     fprintf(fid,'rm misvmPBSOut/*\n');
-    fprintf(fid,'if [ -z $TEMPVAR ]; then\n');
+    fprintf(fid,'if [ -z "$TEMPVAR" ]; then\n');
     fprintf(fid,'echo "All subtasks were completed."\n');
     fprintf(fid,'else\n');
-    fprintf(fid,'echo "${TEMPVAR//> }" > .filelist\n');
-    fprintf(fid,'TEMPVAR=${TEMPVAR//$''\\n''> /,}\n');
-    fprintf(fid,'TEMPVAR=${TEMPVAR//> }\n');
+    fprintf(fid,'echo "${TEMPVAR//> }" > misvmPBSOut/.filelist\n');
+    fprintf(fid,'TEMPVAR="${TEMPVAR//$''\\n''> /,}"\n');
+    fprintf(fid,'TEMPVAR="${TEMPVAR//> }"\n');
     fprintf(fid,'echo "${TEMPVAR} failed."\n'); 
 
     fprintf(fid,'MATLABCODE="${MATLABCODE}addpath(''functions_PACE'');"\n');
