@@ -12,8 +12,9 @@ if usePACE
     kk = 0;
 end
 load('r-eStatesAndPaths/absolute_paths.mat');
+
 load([experimentPath,'param_file.mat'], ...
-    'dl_sparsity_level', ...
+    'list_of_dl_sparsity_levels', ...
     'dl_number_of_iterations', ...
     'udl_dictionary_size');
 load([experimentPath,'structure_file.mat']); 
@@ -33,7 +34,7 @@ if ~usePACE
     x_instances_train = x_instances;
 end
 
-
+for dl_sparsity_level = list_of_dl_sparsity_levels
 
 udl_ksvd_param.Tdata = dl_sparsity_level;
 udl_ksvd_param.iternum = dl_number_of_iterations;
@@ -41,6 +42,8 @@ udl_ksvd_param.dictsize = udl_dictionary_size;
 if ~usePACE
     udl_ksvd_param.data = x_instances_train;
 end
+
+
 
 learned_dictionary_id = dec2hex(randi(2^28) - 1);
 nodeName = 'learned_dictionary_identifier';
@@ -74,7 +77,7 @@ end
 if ~usePACE
     save(instantiationPath,'learned_dictionary','gmat');
 end
-
+end
 end
 
 if usePACE

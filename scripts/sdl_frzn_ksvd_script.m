@@ -14,16 +14,16 @@ if usePACE
     kk = 0;
 end
 load('r-eStatesAndPaths/absolute_paths.mat');
+
+% should load list_of_dl_sparsity_levels instead of + and -
 % load all relevant parameters from param_file.mat'
 load([experimentPath,'param_file.mat'], ...
     'SDL_negative_dictsize', ...
     'SDL_total_dictsize', ...
-    'SDL_negative_sparsity_level', ...
-    'SDL_positive_sparsity_level', ...
+    'list_of_dl_sparsity_levels', ...
     'SDL_negative_iternum', ...
     'SDL_positive_iternum', ...
-    'number_of_classes', ...
-    'lc_sparsity_level');
+    'number_of_classes');
 
 load([experimentPath,'structure_file.mat']);
 
@@ -68,6 +68,10 @@ if ~usePACE
     load([experimentPath,bagLabelsPath],'bag_labels');
     bag_labels_train = bag_labels;
 end
+
+for dl_sparsity_level = list_of_dl_sparsity_levels
+SDL_negative_sparsity_level = dl_sparsity_level;
+SDL_positive_sparsity_level = dl_sparsity_level;
 
 % assign a learned-dictionary identifier.
 learned_dictionary_id = dec2hex(randi(2^28) - 1);
@@ -118,6 +122,7 @@ for cc = 1:number_of_classes
     if ~usePACE
          save(instantiationPath,'learned_dictionary','gmat','class');
     end
+end
 end
 end
 if usePACE

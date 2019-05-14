@@ -78,13 +78,16 @@ parents = [];
 instantiationField = instanceNameFun.ms.(nodeName)(L_i);
 experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents));
 
-%??????
+
 nodeName = 'DL_sparsity_level';
 parents = [];
 nodeAbrev = 'DL_L';
 instanceNameFun.ms.(nodeName) = @(dl_L) sprintf('%s%d',nodeAbrev,dl_L);
-instantiationField = instanceNameFun.ms.(nodeName)(dl_sparsity_level);
-experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents));
+for dl_sparsity_level = list_of_dl_sparsity_levels
+    instantiationField = instanceNameFun.ms.(nodeName)(dl_sparsity_level);
+    experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents));
+end
+
 
 nodeName = 'DL_number_of_iterations';
 parents = [];
@@ -94,7 +97,6 @@ experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(pare
 
 nodeName = 'UDL_dictionary_size';
 parents = [];
-% loop through dl sparsity levels
 instantiationField = instanceNameFun.ms.(nodeName)(udl_dictionary_size);
 experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents));
 
@@ -119,9 +121,10 @@ experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(pare
 
 nodeName = 'learned_coef_sparsity_level';
 parents = [];
-% loop through lc sparsity levels
-instantiationField = instanceNameFun.ms.(nodeName)(lc_sparsity_level);
-experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents));
+for lc_sparsity_level = list_of_lc_sparsity_levels
+    instantiationField = instanceNameFun.ms.(nodeName)(lc_sparsity_level);
+    experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents));
+end
 
 nodeName = 'max_PCA_r';
 parents = [];
@@ -147,9 +150,10 @@ experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(pare
 
 nodeName = 'SDL_negative_sparsity_level';
 parents = [];
-% loop through dl sparsity level
-instantiationField = instanceNameFun.ms.(nodeName)(SDL_negative_sparsity_level);
-experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents));
+for SDL_negative_sparsity_level = list_of_dl_sparsity_levels
+    instantiationField = instanceNameFun.ms.(nodeName)(SDL_negative_sparsity_level);
+    experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents));
+end
 
 nodeName = 'SDL_negative_number_of_iterations';
 parents = [];
@@ -163,9 +167,10 @@ experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(pare
 
 nodeName = 'SDL_positive_sparsity_level';
 parents = [];
-% loop through dl sparsity level
-instantiationField = instanceNameFun.ms.(nodeName)(SDL_positive_sparsity_level);
-experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents));
+for SDL_positive_sparsity_level = list_of_dl_sparsity_levels
+    instantiationField = instanceNameFun.ms.(nodeName)(SDL_positive_sparsity_level);
+    experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents));
+end
 
 nodeName = 'class';
 parents = [];

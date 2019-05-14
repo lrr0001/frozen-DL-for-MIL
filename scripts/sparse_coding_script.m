@@ -16,7 +16,7 @@ load('r-eStatesAndPaths/absolute_paths.mat');
 
 % *** LOAD PARAMETERS ***
 load([experimentPath,'param_file.mat'], ...
-    'lc_sparsity_level', ...
+    'list_of_lc_sparsity_levels', ...
     'instances_per_bag');
 
 % *** LOAD STRUCTURE AND SUPPORTING VARIABLES ***
@@ -62,7 +62,7 @@ end
 data_id_inst_str = parent.instance;
 data_id = get_id_from_inst_field(data_id_inst_str);
 
-% Add loop through list of lc sparsity levels
+for lc_sparsity_level = list_of_lc_sparsity_levels
 
 % *** ADD LEARNED COEFFICIENT IDENTIFIER TO GRAPH ***
 learned_coef_id = dec2hex(randi(2^28) - 1);
@@ -155,7 +155,7 @@ if ~usePACE
     end
 end
 
-
+end
 end
 end
 end
