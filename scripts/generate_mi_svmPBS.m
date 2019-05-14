@@ -16,6 +16,7 @@ for ii = 1:numel(jj_list)
     fprintf(fid,'#PBS -l walltime=12:00:00\n');
     fprintf(fid,'#PBS -l pmem=2gb\n');
     fprintf(fid,'#PBS -q iw-shared-6\n');
+    fprintf(fid,sprintf('#PBS -t %d-%d\n',jj,kk));
     fprintf(fid,'#PBS -j oe\n');
     fprintf(fid,sprintf('#PBS -o misvmPBS%d.out\n'));
     fprintf(fid,'cd ~/scratch/experiment_%s_PACE\n',experiment_hash);

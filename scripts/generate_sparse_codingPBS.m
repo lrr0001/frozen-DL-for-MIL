@@ -13,11 +13,12 @@ for ii = 1:numel(jj_list)
     mkdir([myPBSstr,'Out/']);
     system([sprintf('seq %d 1 %d | sort - > "',jj,kk),myPBSstr,'Out/.filelist"']);
     fid = fopen(myPBSstr,'w');
-    fprintf(fid,sprintf('#PBS -N sparseCodingScript%d\n',ii);
+    fprintf(fid,sprintf('#PBS -N sparseCodingScript%d\n',ii));
     fprintf(fid,'#PBS -l nodes=1:ppn=1\n');
     fprintf(fid,'#PBS -l walltime=2:00:00\n');
     fprintf(fid,'#PBS -l pmem=2gb\n');
     fprintf(fid,'#PBS -q iw-shared-6\n');
+    fprintf(fid,sprintf('#PBS -t %d-%d\n',jj,kk));
     fprintf(fid,'#PBS -j oe\n');
     fprintf(fid,sprintf('#PBS -o sparseCoding%d.out\n',ii));
 
