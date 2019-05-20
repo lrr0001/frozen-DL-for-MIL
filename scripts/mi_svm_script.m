@@ -51,6 +51,7 @@ end
 
 % Find the bag-labels identifier corresponding to the current
 % data identifier.
+%{
 for data_parent = experimentLayout.n.('data_identifier').(data_id_inst_str).parents
     if ~isstreq(data_parent.node,'generating_coefficients_identifier')
         continue;
@@ -73,6 +74,23 @@ for inst_labels_parent = experimentLayout.n.(instance_labels_relative.node).(ins
     break;
 end
 bag_labels_id = get_id_from_inst_field(bag_labels_id_inst_str);
+%}
+
+nodeCondition = @(node) isstreq(node,'bag_labels_identifier');
+for bag_labels_identifier_search = fields(experimentLayout.n.('bag_labels_identifier'))'
+    bag_labels_id_inst_str = bag_labels_identifier_search{1};
+    instantiationCondition = @(instantiation) isstreq(instantiation,bag_labels_id_inst_str);
+    condition = @(node,instantiation) ~(nodeCondition(node) && instantiationCondition(instantiation));
+    if subDirectionQuery(experimentLayout,'data_identifier',data_id_inst_str,condition,'parents')
+        continue;
+    end
+    bag_labels_id = get_id_from_inst_field(bag_labels_id_inst_str);
+    break;
+end
+
+
+
+
 
 % save relative paths to bag labels
 bag_labels_train_str = ['bag_labels/',instanceNameFun.ms.('bag_labels')(bag_labels_id,'train'),ext];
@@ -80,12 +98,12 @@ bag_labels_val_str = ['bag_labels/',instanceNameFun.ms.('bag_labels')(bag_labels
 bag_labels_test_str = ['bag_labels/',instanceNameFun.ms.('bag_labels')(bag_labels_id,'test'),ext];
 bl_strs = {bag_labels_train_str,bag_labels_val_str,bag_labels_test_str};
 
-% add estimated-bag-labels identifier to structure graph
-estimated_bag_labels_id = dec2hex(randi(2^28) - 1);
-nodeName = 'estimated_bag_labels_identifier';
+% add estimated-bag-labels group identifier to structure graph
+estimated_bag_labels_group_id = dec2hex(randi(2^28) - 1);
+nodeName = 'estimated_bag_labels_group_identifier';
 parents = [build_relative_node('bag_labels_identifier',bag_labels_id), ...
     build_relative_node('learned_coefficients_identifier',learned_coef_id)];
-instantiationField = instanceNameFun.ms.(nodeName)(estimated_bag_labels_id);
+instantiationField = instanceNameFun.ms.(nodeName)(estimated_bag_labels_group_id);
 experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents));
 
 
@@ -119,42 +137,59 @@ else
 end
 
 % build dependency sets for classification
-for cc = class_list
-    if supervised
-        learned_coef_train_str = ['learned_coef/',instanceNameFun.ms.('learned_coef')(learned_coef_id,cc,'train'),ext];
-        learned_coef_val_str = ['learned_coef/',instanceNameFun.ms.('learned_coef')(learned_coef_id,cc,'val'),ext];
-        learned_coef_test_str = ['learned_coef/',instanceNameFun.ms.('learned_coef')(learned_coef_id,cc,'test'),ext];
-        parent_learned_coef = @(dt) build_relative_node('learned_coef',learned_coef_id,cc,dt);
-    else
-        learned_coef_train_str = ['learned_coef/',instanceNameFun.ms.('learned_coef')(learned_coef_id,'train'),ext];
-        learned_coef_val_str = ['learned_coef/',instanceNameFun.ms.('learned_coef')(learned_coef_id,'val'),ext];
-        learned_coef_test_str = ['learned_coef/',instanceNameFun.ms.('learned_coef')(learned_coef_id,'test'),ext];
-        parent_learned_coef = @(dt) build_relative_node('learned_coef',learned_coef_id,dt);
-    end
+for cost_exp = list_of_cost_exp
+    for pca_r = curr_pca_r_list
+        if pca
+            parent_pca_r = build_relative_node('pca_r',pca_r);
+            pca_r_cell = {pca_r};
+        else
+            parent_pca_r = [];
+            pca_r_cell = {};
+        end
+        estimated_bag_labels_id = dec2hex(randi(2^28) - 1);
+        nodeName = 'estimated_bag_labels_identifier';
+        parents = [build_relative_node('estimated_bag_labels_group_identifier',estimated_bag_labels_group_id), ...
+            build_relative_node('bag_labels_identifier',bag_labels_id), ...
+            build_relative_node('learned_coefficients_identifier',learned_coef_id), ...
+            build_relative_node('cost_exp',cost_exp), ...
+            parent_pca_r];
+        instantiationField = instanceNameFun.ms.(nodeName)(estimated_bag_labels_id);
+        experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents));
+        for cc = class_list
+
+            if supervised
+                learned_coef_train_str = ['learned_coef/',instanceNameFun.ms.('learned_coef')(learned_coef_id,cc,'train'),ext];
+                learned_coef_val_str = ['learned_coef/',instanceNameFun.ms.('learned_coef')(learned_coef_id,cc,'val'),ext];
+                learned_coef_test_str = ['learned_coef/',instanceNameFun.ms.('learned_coef')(learned_coef_id,cc,'test'),ext];
+                parent_learned_coef = @(dt) build_relative_node('learned_coef',learned_coef_id,cc,dt);
+            else
+                learned_coef_train_str = ['learned_coef/',instanceNameFun.ms.('learned_coef')(learned_coef_id,'train'),ext];
+                learned_coef_val_str = ['learned_coef/',instanceNameFun.ms.('learned_coef')(learned_coef_id,'val'),ext];
+                learned_coef_test_str = ['learned_coef/',instanceNameFun.ms.('learned_coef')(learned_coef_id,'test'),ext];
+        
+                parent_learned_coef = @(dt) build_relative_node('learned_coef',learned_coef_id,dt);
     
-    lc_strs = {learned_coef_train_str,learned_coef_val_str,learned_coef_test_str};
+            end
+            
+            
+            lc_strs = {learned_coef_train_str,learned_coef_val_str,learned_coef_test_str};
     
-    for cost_exp = list_of_cost_exp
-        for pca_r = curr_pca_r_list
+    
+            
             if pca
                 estimated_bag_labels_train_str = ['estimated_bag_labels/',instanceNameFun.ms.('estimated_bag_labels')(learned_coef_id,cost_exp,cc,'train',pca_r),ext];
                 estimated_bag_labels_val_str = ['estimated_bag_labels/',instanceNameFun.ms.('estimated_bag_labels')(learned_coef_id,cost_exp,cc,'val',pca_r),ext];
                 estimated_bag_labels_test_str = ['estimated_bag_labels/',instanceNameFun.ms.('estimated_bag_labels')(learned_coef_id,cost_exp,cc,'test',pca_r),ext];
-                
-                parent_pca_r = build_relative_node('pca_r',pca_r);
-                pca_r_cell = {pca_r};    
-         
             else
                 estimated_bag_labels_train_str = ['estimated_bag_labels/',instanceNameFun.ms.('estimated_bag_labels')(learned_coef_id,cost_exp,cc,'train'),ext];
                 estimated_bag_labels_val_str = ['estimated_bag_labels/',instanceNameFun.ms.('estimated_bag_labels')(learned_coef_id,cost_exp,cc,'val'),ext];
                 estimated_bag_labels_test_str = ['estimated_bag_labels/',instanceNameFun.ms.('estimated_bag_labels')(learned_coef_id,cost_exp,cc,'test'),ext];
-                
-                parent_pca_r = [];
-                pca_r_cell = {};
             end
+            
             ebl_strs = {estimated_bag_labels_train_str,estimated_bag_labels_val_str,estimated_bag_labels_test_str};
 
-            coreParents = [build_relative_node('estimated_bag_labels_identifier',estimated_bag_labels_id), ...
+            coreParents = [build_relative_node('estimated_bag_labels_group_identifier',estimated_bag_labels_group_id),...
+                build_relative_node('estimated_bag_labels_identifier',estimated_bag_labels_id), ...
                 build_relative_node('class',cc), ...
                 build_relative_node('cost_exp',cost_exp), ...
                 parent_pca_r];
@@ -180,4 +215,5 @@ end
 end
 
 save([experimentPath,'structure_file.mat'],'experimentLayout','-append');
+
 end

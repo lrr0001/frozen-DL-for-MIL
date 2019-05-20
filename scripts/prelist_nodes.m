@@ -42,6 +42,10 @@ nodeName = 'learned_coefficients_identifier';
 nodeAbrev = 'lci';
 instanceNameFun.ms.(nodeName) = @(lci) sprintf('%s_%s',nodeAbrev,lci);
 
+nodeName = 'estimated_bag_labels_group_identifier';
+nodeAbrev = 'egi';
+instanceNameFun.ms.(nodeName) = @(egi) sprintf('%s_%s',nodeAbrev,egi);
+
 nodeName = 'estimated_bag_labels_identifier';
 nodeAbrev = 'ebi';
 instanceNameFun.ms.(nodeName) = @(ebi) sprintf('%s_%s',nodeAbrev,ebi);
