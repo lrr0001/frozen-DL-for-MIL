@@ -36,8 +36,8 @@ for ii = 1:numel(jj_list)
     fprintf(fid,'MATLABCODE="${MATLABCODE}cd(''..'');"\n');
     fprintf(fid,'MATLABCODE="${MATLABCODE}dependency=get_sparse_coding_dependencies(${PBS_ARRAYID});"\n');
     fprintf(fid,'MATLABCODE="${MATLABCODE}sparse_coding_PACE(dependency);"\n');
-    fprintf(fid,'MATLABCODE="${MATLABCODE}fid = fopen(''sparse_codingPBS%dOut/${PBS_ARRAYID}'',''w'');\n',ii);
-    fprintf(fid,'MATLABCODE="${MATLABCODE}fclose(fid);\n');
+    fprintf(fid,'MATLABCODE="${MATLABCODE}fid = fopen(''sparse_codingPBS%dOut/${PBS_ARRAYID}'',''w'');"\n',ii);
+    fprintf(fid,'MATLABCODE="${MATLABCODE}fclose(fid);"\n');
     fprintf(fid,'MATLABCODE="${MATLABCODE}exit;"\n');
     fprintf(fid,'matlab -nodesktop -nosplash -r "${MATLABCODE}"\n');
     fclose(fid);

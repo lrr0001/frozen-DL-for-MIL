@@ -26,8 +26,8 @@ number_of_class_specific_dictionary_atoms = 8;
 
 K = number_of_class_specific_dictionary_atoms*ones(1,number_of_classes);
 
-number_of_bags.train = 2^10;
-number_of_bags.val = 2^9;
+number_of_bags.train = 2^9;
+number_of_bags.val = 2^10;
 number_of_bags.test = 2^10;
 
 instances_per_bag = 16;

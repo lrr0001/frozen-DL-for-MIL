@@ -14,7 +14,7 @@ for ii = 1:numel(jj_list)
     fprintf(fid,sprintf('#PBS -N misvmScript%d\n',ii));
     fprintf(fid,'#PBS -l nodes=1:ppn=1\n');
     fprintf(fid,'#PBS -l walltime=12:00:00\n');
-    fprintf(fid,'#PBS -l pmem=4gb\n');
+    fprintf(fid,'#PBS -l pmem=8gb\n');
     fprintf(fid,'#PBS -q iw-shared-6\n');
     fprintf(fid,sprintf('#PBS -t %d-%d\n',jj,kk));
     fprintf(fid,'#PBS -j oe\n');

@@ -177,13 +177,13 @@ for cost_exp = list_of_cost_exp
     
             
             if pca
-                estimated_bag_labels_train_str = ['estimated_bag_labels/',instanceNameFun.ms.('estimated_bag_labels')(learned_coef_id,cost_exp,cc,'train',pca_r),ext];
-                estimated_bag_labels_val_str = ['estimated_bag_labels/',instanceNameFun.ms.('estimated_bag_labels')(learned_coef_id,cost_exp,cc,'val',pca_r),ext];
-                estimated_bag_labels_test_str = ['estimated_bag_labels/',instanceNameFun.ms.('estimated_bag_labels')(learned_coef_id,cost_exp,cc,'test',pca_r),ext];
+                estimated_bag_labels_train_str = ['estimated_bag_labels/',instanceNameFun.ms.('estimated_bag_labels')(estimated_bag_labels_group_id,cost_exp,cc,'train',pca_r),ext];
+                estimated_bag_labels_val_str = ['estimated_bag_labels/',instanceNameFun.ms.('estimated_bag_labels')(estimated_bag_labels__group_id,cost_exp,cc,'val',pca_r),ext];
+                estimated_bag_labels_test_str = ['estimated_bag_labels/',instanceNameFun.ms.('estimated_bag_labels')(estimated_bag_labels__group_id,cost_exp,cc,'test',pca_r),ext];
             else
-                estimated_bag_labels_train_str = ['estimated_bag_labels/',instanceNameFun.ms.('estimated_bag_labels')(learned_coef_id,cost_exp,cc,'train'),ext];
-                estimated_bag_labels_val_str = ['estimated_bag_labels/',instanceNameFun.ms.('estimated_bag_labels')(learned_coef_id,cost_exp,cc,'val'),ext];
-                estimated_bag_labels_test_str = ['estimated_bag_labels/',instanceNameFun.ms.('estimated_bag_labels')(learned_coef_id,cost_exp,cc,'test'),ext];
+                estimated_bag_labels_train_str = ['estimated_bag_labels/',instanceNameFun.ms.('estimated_bag_labels')(estimated_bag_labels_group_id,cost_exp,cc,'train'),ext];
+                estimated_bag_labels_val_str = ['estimated_bag_labels/',instanceNameFun.ms.('estimated_bag_labels')(estimated_bag_labels_group_id,cost_exp,cc,'val'),ext];
+                estimated_bag_labels_test_str = ['estimated_bag_labels/',instanceNameFun.ms.('estimated_bag_labels')(estimated_bag_labels_group_id,cost_exp,cc,'test'),ext];
             end
             
             ebl_strs = {estimated_bag_labels_train_str,estimated_bag_labels_val_str,estimated_bag_labels_test_str};
@@ -203,7 +203,7 @@ for cost_exp = list_of_cost_exp
                     relativeNode('dataset_type',dataType), ...
                     build_relative_node('bag_labels',bag_labels_id,dataType), ...
                     parent_learned_coef(dataType)];
-                instantiationField = instanceNameFun.ms.(nodeName)(estimated_bag_labels_id,cost_exp,cc,dataType,pca_r_cell{:});
+                instantiationField = instanceNameFun.ms.(nodeName)(estimated_bag_labels_group_id,cost_exp,cc,dataType,pca_r_cell{:});
                 experimentLayout.add_instantiation(nodeName,instantiationField,nodeInstance(parents));
             end
             kk = kk + 1;
