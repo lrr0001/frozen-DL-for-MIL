@@ -70,11 +70,7 @@ for estimated_bag_labels_node = experimentLayout.n.('estimated_bag_labels_identi
 
 end
 
-for ii = 1:numel(datatype_list)
-    datatype = datatype_list{ii};
-    accuracy.(datatype) = true(1,number_of_bags.(datatype));
-    for 
-end
+for datatype = 
 
 
 

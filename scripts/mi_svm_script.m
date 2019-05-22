@@ -178,8 +178,8 @@ for cost_exp = list_of_cost_exp
             
             if pca
                 estimated_bag_labels_train_str = ['estimated_bag_labels/',instanceNameFun.ms.('estimated_bag_labels')(estimated_bag_labels_group_id,cost_exp,cc,'train',pca_r),ext];
-                estimated_bag_labels_val_str = ['estimated_bag_labels/',instanceNameFun.ms.('estimated_bag_labels')(estimated_bag_labels__group_id,cost_exp,cc,'val',pca_r),ext];
-                estimated_bag_labels_test_str = ['estimated_bag_labels/',instanceNameFun.ms.('estimated_bag_labels')(estimated_bag_labels__group_id,cost_exp,cc,'test',pca_r),ext];
+                estimated_bag_labels_val_str = ['estimated_bag_labels/',instanceNameFun.ms.('estimated_bag_labels')(estimated_bag_labels_group_id,cost_exp,cc,'val',pca_r),ext];
+                estimated_bag_labels_test_str = ['estimated_bag_labels/',instanceNameFun.ms.('estimated_bag_labels')(estimated_bag_labels_group_id,cost_exp,cc,'test',pca_r),ext];
             else
                 estimated_bag_labels_train_str = ['estimated_bag_labels/',instanceNameFun.ms.('estimated_bag_labels')(estimated_bag_labels_group_id,cost_exp,cc,'train'),ext];
                 estimated_bag_labels_val_str = ['estimated_bag_labels/',instanceNameFun.ms.('estimated_bag_labels')(estimated_bag_labels_group_id,cost_exp,cc,'val'),ext];

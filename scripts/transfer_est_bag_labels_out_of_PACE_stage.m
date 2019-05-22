@@ -29,7 +29,7 @@ for filename = list_of_files
     estimated_bag_labels = (sign(estimated_bag_labels_array) + 1)/2;
     
     datatype = python_output{2};
-    ebl_path = [experimentPathPACE,'estimated_bag_labels',instField,'.mat'];
+    ebl_path = [experimentPath,'estimated_bag_labels/',instField,'.mat'];
     save(ebl_path,'estimated_bag_labels','datatype');
     experimentLayout.add_instantiation('estimated_bag_labels',instField,nodeInstance(experimentLayout.n.estimated_bag_labels.(instField).parents,ebl_path));
 end
